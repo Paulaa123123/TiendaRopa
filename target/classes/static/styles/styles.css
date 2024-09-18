@@ -1,0 +1,144 @@
+@charset "UTF-8";
+/*
+CODIGO BASE DE LA WEB. NO TOCAR
+cualquier modificacion de estilos sobre esta base se hara
+en una hoja de estilos adicional y se enlazara al JSP correspondiente
+*/
+:root {
+  /* Colores Azul Verdoso */
+  --principal: #007F7E;
+  --principalOscuro: #005D5C;
+  --principalMuyOscuro: #004848;
+  --principalClaro: #00A5A4;
+  --principalMuyClaro: #00B8B7;
+
+  /* contraste Dorado */
+  --contraste: #FFD700;
+  --contrasteOscuro: #CCA300;
+  --contrasteClaro: #FFE066;
+  
+  /* Colores de Fondo */
+  --colorFondoOscuro: #E0F7F7;
+  --colorFondoClaro: #F5FEFE;
+  
+  /* Colores de Texto */
+  --texto: #212121; 
+  --textoClaro: #BDBDBD; 
+  
+  /* Tamaños */
+  --sizeFuente: 12px;
+  
+  /* Fuentes */
+  --fuente: 'Helvetica Neue', Arial, sans-serif;
+  --fuenteContraste: 'Georgia', 'Times New Roman', serif;
+  
+  /* Alturas de cabecera y pie */
+  --alturaCabecera: 180px;
+  --alturaPie: 60px;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	font-family: var(--fuente);
+	color: var(--texto);
+	font-size:var(--texto);
+}
+/* Arreglos */
+body{
+	background-color: #80dfdf;
+}
+
+/* Estilos de la cabecera */
+header{
+	/*este height se usa en el calculo del tamaño del main*/
+	height:var(--alturaCabecera);	
+	background-color: var(--principal);
+	display:flex;
+	flex-direction:column;
+	justify-content: flex-end;
+
+}
+
+
+h1{
+	margin:10px;
+	color:var(--contraste);
+	
+	font-family: var(--fuenteContraste);
+	font-size:48px;
+}
+
+/* Estilos del menu */
+nav{
+	width:100%;
+	
+}
+
+nav ul{
+	display:flex;
+	flex-direction:column;
+	justify-content: flex-start;
+	align-items: start;
+}
+
+.elem_menu{
+	display:inline-block;
+	list-style: none;
+	width:100%;
+}
+
+.elem_menu > a{
+	display:inline-block;
+	margin-bottom:20px;
+	background-color:var(--principalOscuro);
+	padding: 10px 0;
+	text-align: center;
+	color: var(--contraste);
+	font-weight: bold;
+	font-size: 18px;
+	text-decoration: none;
+
+	width:100%;
+}
+
+.elem_menu > a:visited{
+	color: var(--contraste);
+}
+
+.elem_menu > a:hover{
+	background-color:var(--principalClaro);
+	color: var(--contrasteClaro);
+}
+.elem_menu > a:active{
+	background-color:var(--contraste);
+	color: var(--principalMuyOscuro);
+}
+
+/* estilos del cuerpo */
+main{	
+	/* altura del main= todo menos la cabecera y el pie. tienen altura fija */
+	min-height: calc(100vh - (var(--alturaCabecera)));
+	background-color: var(--colorFondoClaro);
+	
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: flex-start;
+}
+
+
+aside{
+	padding: 10px;
+	width:300px;
+	min-height: calc(100vh - (var(--alturaCabecera) + 20px ));
+}
+
+section{
+	padding: 10px;
+	width:100%;
+	background-color: var(--colorFondoOscuro);
+	min-height: calc(100vh - (var(--alturaCabecera) + 20px));
+}
+
+

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Plantilla</title>
+	<link rel="stylesheet" href="styles/styles.css">
+	<link rel="stylesheet" href="styles/productos.css">
+</head>
+
+<body>
+
+	<header>
+		<div>
+			<h1>Tienda de ropa</h1>
+		</div>
+	</header>
+
+	<main>
+		<aside>
+			<nav>
+				<ul id="menu">
+					<li class="elem_menu">
+						<a href="#">Camisazas</a>
+					</li>
+					<li class="elem_menu">
+						<a href="#">Faldas</a>
+					</li>
+					<li class="elem_menu">
+						<a href="#">Jerseys</a>
+					</li>
+					<li class="elem_menu">
+						<a href="#">Pantalones</a>
+					</li>
+				</ul>
+			</nav>
+		</aside>
+
+		<section class="contenedor">
+
+			<div th:each="elem : ${atr_lista_productos}" class="producto">
+				<div class="ph_nombre" th:text="${elem.nombre}">Nombre</div>
+				<div class="ph_foto">
+					<img th:src="@{'/images/'+${elem.foto}}" height="64px;" alt="Imagen del producto" />
+				</div>
+				<div class="ph_talla" th:text="${elem.talla.talla}">Talla</div>
+				<div class="ph_precio" th:text="${elem.precio}">Precio</div>
+			</div>
+
+		</section>
+
+
+	</main>
+</body>
+
+</html>

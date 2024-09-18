@@ -1,0 +1,31 @@
+.contenedor {  display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto;
+    gap: 20px 20px;
+    grid-auto-flow: row;
+    grid-template-areas:
+      ". . .";
+  }
+
+  .producto { 
+    background-color: aliceblue;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 120px auto;
+    gap: 10px 10px;
+    grid-auto-flow: row;
+    grid-template-areas:
+      "ph_nombre ph_nombre"
+      "ph_foto ph_foto"
+      "ph_talla ph_precio";
+      padding: 10px;
+  }
+  
+  .ph_nombre { grid-area: ph_nombre; }
+  
+  .ph_foto { grid-area: ph_foto; }
+  
+  .ph_talla { grid-area: ph_talla; }
+  
+  .ph_precio { grid-area: ph_precio; }
+  

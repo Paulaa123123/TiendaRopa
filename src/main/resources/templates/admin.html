@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Plantilla</title>
+	<link rel="stylesheet" href="styles/styles.css">
+	<link rel="stylesheet" href="styles/admin.css">
+</head>
+
+<body>
+	<header>
+		<div>
+			<h1>Admin</h1>
+			<a th:href="@{/cerrarSesion}">Cerrar Sesion</a>
+
+		</div>
+	</header>
+
+	<main>
+		<aside>
+			<nav>
+				<ul id="menu">
+					<li class="elem_menu">
+						<a th:href="@{/superuser}">Productos</a>
+					</li>
+					<li class="elem_menu">
+						<a href="#">Mantenimiento</a>
+					</li>
+				</ul>
+			</nav>
+		</aside>
+
+		<section>
+			<div> mensaje de error</div>
+
+			<form method="post" th:action="@{/adminGuardarProducto}" th:object="${obj_producto}"
+				enctype="multipart/form-data">
+
+				<label>Nombre: </label>
+				<input type="text" th:field="*{nombre}" />
+				<br />
+
+				<label>Precio: </label>
+				<input type="text" th:field="*{precio}" />
+				<br />
+
+				<label>Foto: </label>
+				<input type="file" name="param_foto" accept="image/*" />
+				<br />
+
+				<label>Genero: </label>
+				<select th:field="*{genero.id}">
+					<option th:each="elem :${atr_lista_generos}" th:text="${elem.genero}" th:value="${elem.id}">
+					</option>
+				</select>
+
+				<br />
+				<label>Categoria: </label>
+				<select th:field="*{categoria.id}">
+					<option th:each="elem :${atr_lista_categorias}" th:text="${elem.categoria}" th:value="${elem.id}">
+					</option>
+				</select>
+				<br />
+
+				<label>Talla: </label>
+				<select th:field="*{talla.id}">
+					<option th:each="elem :${atr_lista_tallas}" th:text="${elem.talla}" th:value="${elem.id}">
+					</option>
+				</select>
+				<br />
+				<input type="submit" value="Agregar producto" />
+
+			</form>
+		</section>
+
+
+		<section>
+
+			<table border="1">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Nombre</th>
+						<th>Precio</th>
+						<th>Foto</th>
+						<th>Genero</th>
+						<th>Categoria</th>
+						<th>Talla</th>
+						<th>Opciones</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="elem : ${atr_lista_productos}">
+						<td th:text="${elem.id}">Id</td>
+						<td th:text="${elem.nombre}">Nombre</td>
+						<td th:text="${elem.precio}">Precio</td>
+						<td>
+							<img th:src="@{'/images/'+${elem.foto}}" height="64px;"><br>
+							<a th:href="@{/adminBorrarImagen(nombre=${elem.foto}, id=${elem.id})}">Borrar</a>
+						</td>
+						<td th:text="${elem.genero.genero}">Genero</td>
+						<td th:text="${elem.categoria.categoria}">Categoria</td>
+						<td th:text="${elem.talla.talla}">Talla</td>
+						<td>
+							<a th:href="@{/adminBorrarProducto(id=${elem.id})}">Borrar</a>
+							<a th:href="@{/adminFrmModificarProducto(id=${elem.id})}">Modificar</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</section>
+
+
+	</main>
+
+
+
+</body>
+
+</html>

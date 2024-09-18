@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Plantilla</title>
+	<link rel="stylesheet" href="styles/styles.css">
+	<link rel="stylesheet" href="styles/admin.css">
+</head>
+
+<body>
+	<header>
+		<div>
+			<h1>Admin</h1>
+		</div>
+	</header>
+
+	<main>
+		<aside>
+			<nav>
+				<ul id="menu">
+					<li class="elem_menu">
+						<a th:href="@{/superuser}">Productos</a>
+					</li>
+					<!--					<li class="elem_menu">-->
+					<!--						<a href="#">Categorias</a>-->
+					<!--					</li>-->
+				</ul>
+			</nav>
+		</aside>
+
+		<section>
+			<form method="post" th:action="@{/adminModificarProducto}" th:object="${obj_producto}"
+				enctype="multipart/form-data">
+
+				<label>ID: </label>
+				<input type="text" th:field="*{id}" readonly />
+				<br />
+
+				<label>Nombre: </label>
+				<input type="text" th:field="*{nombre}" />
+				<br />
+
+				<label>Precio: </label>
+				<input type="text" th:field="*{precio}" />
+				<br />
+
+				<label>Foto: </label>
+				<input type="file" name="param_foto" />
+				<br />
+
+				<label>FotoHidden: </label>
+				<input type="text" name="param_hidden_foto" th:field="*{foto}" />
+				<br />
+				<label>Categoria: </label>
+				<select th:field="*{categoria.id}">
+					<option th:each="elem :${atr_lista_categorias}" th:text="${elem.categoria}" th:value="${elem.id}">
+					</option>
+				</select>
+				<br />
+
+				<label>Genero: </label>
+				<select th:field="*{genero.id}">
+					<option th:each="elem :${atr_lista_generos}" th:text="${elem.genero}" th:value="${elem.id}">
+					</option>
+				</select>
+
+				<br />
+				<label>Talla: </label>
+				<select th:field="*{talla.id}">
+					<option th:each="elem :${atr_lista_tallas}" th:text="${elem.talla}" th:value="${elem.id}">
+					</option>
+				</select>
+				<br />
+				<input type="submit" value="Modificar" />
+
+			</form>
+		</section>
+	</main>
+
+
+
+</body>
+
+</html>
