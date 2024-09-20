@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Plantilla</title>
+	<link rel="stylesheet" href="styles/styles.css">
+	<link rel="stylesheet" href="styles/admin.css">
+</head>
+
+<body>
+	<header>
+		<div >
+			<h1>Admin</h1>
+			<a th:href="@{/cerrarSesion}">Cerrar Sesion</a>
+			
+		</div>
+	</header>
+
+	<main>
+		<aside>
+			<nav>
+				<ul id="menu">
+					<li class="elem_menu">
+						<a th:href="@{/superuser}">Productos</a>
+					</li>
+					<li class="elem_menu">
+						<a th:href="@{/mantenimiento}">Mantenimiento</a>
+					</li>
+				</ul>
+			</nav>
+		</aside>
+
+		<section>
+			<div th:if="${session.s_mensaje != null }" > 
+				<p th:text="${session.s_mensaje}"></p>
+			</div>
+			
+			<a th:href="@{/crearCopia}">Crear copia de seguridad</a>
+			
+			
+			<a th:href="@{/restaurarCopia}">Restaurar copia de seguridad</a>
+			
+			
+		</section>
+
+	</main>
+
+
+
+</body>
+</html>

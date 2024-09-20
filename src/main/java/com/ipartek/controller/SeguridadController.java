@@ -78,7 +78,7 @@ public class SeguridadController {
 		repositorioMap.put("roles.csv", new ArrayList<>());
 
 		for (String nombreArchivo : nombresArchivos) {
-			List lista = Auxiliares.leerCSV("src/main/backups/" + nombreArchivo);
+			List lista = Auxiliares.leerCSV("" + nombreArchivo);
 			List repositorio = (List) repositorioMap.get(nombreArchivo);
 			if (repositorio != null) {
 				repositorio.addAll(lista);
