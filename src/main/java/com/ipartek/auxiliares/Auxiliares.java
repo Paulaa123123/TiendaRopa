@@ -1,13 +1,15 @@
 package com.ipartek.auxiliares;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -74,5 +76,23 @@ public class Auxiliares {
 			System.out.println("Ocurrió un error al crear el archivo.");
 			e.printStackTrace();
 		}
+	}
+
+	public static List leerCSV(String nombreArchivo) {
+		List lista = new ArrayList<>();
+		Path ruta = Paths.get("src/main/backups/", nombreArchivo);
+
+		try (BufferedReader lector = new BufferedReader(new FileReader(ruta.toString()))) {
+			String linea;
+			while ((linea = lector.readLine()) != null) {
+				lista.add(linea);
+			}
+			System.out.println("El archivo " + nombreArchivo + " se ha leído correctamente.");
+		} catch (IOException e) {
+			System.out.println("Ocurrió un error al leer el archivo.");
+			e.printStackTrace();
+		}
+
+		return lista;
 	}
 }
