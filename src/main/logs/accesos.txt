@@ -1,0 +1,21 @@
+
+2024-09-25 11:33:49.898: Alarma -> USUARIO admin ENVIADO AL HONEYPOT
+
+2024-09-25 11:34:14.799: Info -> Entrada del usuario: admin
+
+2024-09-25 11:34:43.812: Advertencia -> Intento de entrada del usuario: admin(password= ****1234)
+
+2024-09-25 11:34:46.952: Advertencia -> Intento de entrada del usuario: admin(password= ****2345)
+
+2024-09-25 11:34:49.836: Alarma -> USUARIO admin BANEADO
+
+2024-09-25 11:34:52.225: Alarma -> USUARIO admin ENVIADO AL HONEYPOT
+
+2024-09-25 11:44:00.442: Info -> Entrada del usuario: paula
+
+2024-09-25 11:44:34.025: Info -> Entrada del usuario: admin
+
+2024-09-25 11:45:08.035: Info -> Entrada del usuario: admin
+
+2024-09-25 11:46:04.143: Info -> Entrada del usuario: admin
+

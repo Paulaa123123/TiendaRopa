@@ -1,2 +1,2 @@
-Usuario [id=1, usuario=admin, pass=1234, rol=Rol [id=1, rol=admin]]
-Usuario [id=2, usuario=paula, pass=1234, rol=Rol [id=2, rol=usuario]]
+Usuario [id=1, usuario=admin, pass=12345678, rol=Rol [id=3, rol=baneado]]
+Usuario [id=2, usuario=paula, pass=12345678, rol=Rol [id=2, rol=usuario]]

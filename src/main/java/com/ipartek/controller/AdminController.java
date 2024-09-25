@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ipartek.auxiliares.Auxiliares;
+import com.ipartek.auxiliares.I_Logs;
+import com.ipartek.auxiliares.Logs;
 import com.ipartek.auxiliares.Mensajeria;
 import com.ipartek.model.Producto;
 import com.ipartek.model.Rol;
@@ -44,40 +46,93 @@ public class AdminController {
 	@RequestMapping("/superuser")
 	public String cargarAdmin(Model model, HttpSession session) {
 
-		Usuario usu = (Usuario) session.getAttribute("s_usuario");
-
-		if (usu == null || usu.getRol().getId() != 1) {
-			return "redirect:https://www.google.es/";
-		}
-
 		model.addAttribute("atr_lista_generos", generoRepo.findAll());
 		model.addAttribute("atr_lista_categorias", categoriaRepo.findAll());
 		model.addAttribute("atr_lista_productos", productoRepo.findAll());
-		model.addAttribute("atr_lista_tallas", tallaRepo.findAll());
+
 		model.addAttribute("obj_producto", new Producto());
 
-		return "admin";
+		Usuario usu = new Usuario();
+		if (session.getAttribute("s_usuario") != null) {
+			usu = (Usuario) (session.getAttribute("s_usuario"));
+		}
+
+		String ruta = "";
+		switch (usu.getRol().getId()) {
+		case 1:
+			ruta = "admin";
+			break;
+		case 2:
+			ruta = "admin";
+			break;
+		default:
+			ruta = "redirect:https://www.google.es/";
+			break;
+		}
+
+		return ruta;
 	}
 
 	@RequestMapping("/adminBorrarImagen")
 	public String borrarImagenAdmin(Model model, @RequestParam(value = "nombre", required = false) String nombre,
-			@RequestParam(value = "id", required = false) int id) {
+			@RequestParam(value = "id", required = false) int id, HttpSession session) {
+
+		Usuario usu = new Usuario();
+		if (session.getAttribute("s_usuario") != null) {
+			usu = (Usuario) (session.getAttribute("s_usuario"));
+		}
+
+		String ruta = "";
+		switch (usu.getRol().getId()) {
+		case 1:
+			ruta = "redirect:/superuser";
+			break;
+		case 2:
+			ruta = "redirect:/superuser";
+			break;
+		default:
+			ruta = "redirect:https://www.google.es/";
+			break;
+		}
+
+		Mensajeria.limpiarMensaje(session);
 
 		Auxiliares.borrarImagenFisica(nombre);
 
 		Optional<Producto> prod = productoRepo.findById(id);
-
 		prod.get().setFoto("default.jpg");
-
 		Producto productoModificado = prod.get();
 
 		productoRepo.save(productoModificado);
+
+		Mensajeria.registrarMensaje(session, 2);
 
 		return "redirect:/superuser";
 	}
 
 	@RequestMapping("/adminFrmBorrarProducto")
-	public String borrarProductoAdmin(Model model, @RequestParam(value = "id", required = false) Integer id) {
+	public String borrarProductoAdmin(Model model, @RequestParam(value = "id", required = false) Integer id,
+			HttpSession session) {
+
+		Usuario usu = new Usuario();
+		if (session.getAttribute("s_usuario") != null) {
+			usu = (Usuario) (session.getAttribute("s_usuario"));
+		}
+
+		String ruta = "";
+		switch (usu.getRol().getId()) {
+		case 1:
+			ruta = "redirect:/superuser";
+			break;
+		case 2:
+			ruta = "redirect:/superuser";
+			break;
+		default:
+			ruta = "redirect:https://www.google.es/";
+			break;
+		}
+
+		Mensajeria.limpiarMensaje(session);
 
 		Optional<Producto> prod = productoRepo.findById(id);
 		Producto productoABorrar = prod.get();
@@ -88,11 +143,15 @@ public class AdminController {
 
 		productoRepo.deleteById(id);
 
-		return "redirect:/superuser";
+		Mensajeria.registrarMensaje(session, 3);
+
+		return ruta;
 	}
 
 	@RequestMapping("/login")
 	public String loginAdmin(Model model, HttpSession session) {
+
+		Mensajeria.limpiarMensaje(session);
 
 		model.addAttribute("obj_usuario", new Usuario());
 		if (session.getAttribute("s_intentos") == null) {
@@ -105,39 +164,60 @@ public class AdminController {
 	@RequestMapping("/revisarLogin")
 	public String revisarLoginAdmin(Model model, @ModelAttribute("obj_usuario") Usuario usuario, HttpSession session) {
 
+		Mensajeria.limpiarMensaje(session);
+
 		Usuario usuValidado = usuarioRepo.validarUsuario(usuario.getUsuario(), usuario.getPass());
 
 		if (usuValidado != null) {
 			session.setAttribute("s_usuario", usuValidado);
+			session.setAttribute("s_usuario_Log", usuValidado);
+			// en caso que el login sea correcto, no hara falta mandar mensaje de error
+
+			session.removeAttribute("s_intentos");// limpiamos el numero de intentos
 
 			String ruta = "";
-
-			if (usuValidado.getRol().getId() == 1) {
+			switch (usuValidado.getRol().getId()) {
+			case 1:
 				ruta = "redirect:/superuser";
-			} else {
+				break;
+			case 2:
+				ruta = "redirect:/superuser";
+				break;
 
+			default:
 				ruta = "redirect:https://www.google.es/";
+				break;
 			}
 
-			return ruta;
+			Logs.registrarLogAcceso(I_Logs.LOG_ACCESOS_ACCESO_CORRECTO, session);
 
+			return ruta;
 		} else {
+			session.setAttribute("s_usuario_Log", usuario);
+			Mensajeria.registrarMensaje(session, 5);
 
 			session.setAttribute("s_intentos", (int) session.getAttribute("s_intentos") + 1);
 
-			System.out.println("Intento " + (int) session.getAttribute("s_intentos"));
+			System.out.println("Intento" + (int) session.getAttribute("s_intentos"));
 
 			if ((int) session.getAttribute("s_intentos") < 3) {
-				Mensajeria.registrarMensaje(session, 1);
+
+				Logs.registrarLogAcceso(I_Logs.LOG_ACCESOS_ACCESO_FALLIDO, session);
 				return "login";
 			} else if ((int) session.getAttribute("s_intentos") == 3) {
 				Usuario usuBlock = usuarioRepo.validarUsuario(usuario.getUsuario());
 				if (usuBlock != null) {
 					usuBlock.setRol(new Rol(3, "baneado"));
 					usuarioRepo.save(usuBlock);
+
+					Logs.registrarLogAcceso(I_Logs.LOG_ACCESOS_ACCESO_BANEADO, session);
 				}
+
 				return "login";
 			} else {
+
+				Logs.registrarLogAcceso(I_Logs.LOG_ACCESOS_HONEYPOT, session);
+
 				return "redirect:https://www.google.es/";
 			}
 		}
@@ -146,8 +226,30 @@ public class AdminController {
 	@RequestMapping("/cerrarSesion")
 	public String cerrarSesionAdmin(Model model, HttpSession session) {
 
+		Usuario usu = new Usuario();
+		if (session.getAttribute("s_usuario") != null) {
+			usu = (Usuario) (session.getAttribute("s_usuario"));
+		}
+
+		String ruta = "";
+		switch (usu.getRol().getId()) {
+		case 1:
+			ruta = "redirect:/";
+			break;
+		case 2:
+			ruta = "redirect:/";
+			break;
+		default:
+			ruta = "redirect:https://www.google.es/";
+			break;
+		}
+
+		session.setAttribute("s_usuario_Log", usu);
+		Logs.registrarLogAcceso(I_Logs.LOG_ACCESOS_ACCESO_CIERRE_SESION, session);
+
 		session.invalidate();
-		return "redirect:/";
+
+		return ruta;
 	}
 
 	@RequestMapping("/adminBorrarProducto")
@@ -157,43 +259,103 @@ public class AdminController {
 	}
 
 	@RequestMapping("/adminFrmModificarProducto")
-	public String modificarProducto(Model model, @RequestParam(value = "id", required = false) Integer id,
-			@ModelAttribute("obj_producto") Producto producto) {
-		model.addAttribute("atr_lista_generos", generoRepo.findAll());
-		model.addAttribute("atr_lista_categorias", categoriaRepo.findAll());
-		model.addAttribute("atr_lista_tallas", tallaRepo.findAll());
+	public String frmModificarProductoAdmin(Model model, @RequestParam(value = "id", required = false) Integer id,
+			HttpSession session) {
 
-		if (id != null) {
-			producto = productoRepo.findById(id).orElse(producto = new Producto());
+		Usuario usu = new Usuario();
+		if (session.getAttribute("s_usuario") != null) {
+			usu = (Usuario) (session.getAttribute("s_usuario"));
 		}
 
-		model.addAttribute("obj_producto", producto);
+		String ruta = "";
+		switch (usu.getRol().getId()) {
+		case 1:
+			ruta = "frm_modificar_productos";
+			break;
+		case 2:
+			ruta = "frm_modificar_productos";
+			break;
+		default:
+			ruta = "redirect:https://www.google.es/";
+			break;
+		}
 
-		return "/formModificarProducto";
+		model.addAttribute("atr_lista_generos", generoRepo.findAll());
+		model.addAttribute("atr_lista_categorias", categoriaRepo.findAll());
+
+		Producto prod = new Producto();
+		if (id != null) {
+			prod = productoRepo.findById(id).orElse(prod = new Producto());
+		}
+
+		model.addAttribute("obj_producto", prod);
+
+		return ruta;
 	}
 
 	@RequestMapping("/adminModificarProducto")
 	public String modificarProductoAdmin(Model model, @ModelAttribute("obj_producto") Producto producto,
-			@RequestParam("param_foto") MultipartFile archivo) {
+			@RequestParam("param_foto") MultipartFile archivo, HttpSession session) {
 
-		// HACER
-		if (!archivo.isEmpty()) {
-			Auxiliares.guardarImagen(producto, archivo);
+		Usuario usu = new Usuario();
+		if (session.getAttribute("s_usuario") != null) {
+			usu = (Usuario) (session.getAttribute("s_usuario"));
 		}
 
-		productoRepo.save(producto);
-		return "redirect:/superuser";
+		String ruta = "";
+		switch (usu.getRol().getId()) {
+		case 1:
+			ruta = "redirect:/superuser";
+			break;
+		case 2:
+			ruta = "redirect:/superuser";
+			break;
+		default:
+			ruta = "redirect:https://www.google.es/";
+			break;
+		}
 
-	}
-
-	@RequestMapping("/adminGuardarProducto")
-	public String guardarProducto(Model model, @ModelAttribute("obj_producto") Producto producto,
-			@RequestParam("param_foto") MultipartFile archivo) {
+		Mensajeria.limpiarMensaje(session);
 
 		Auxiliares.guardarImagen(producto, archivo);
 
 		productoRepo.save(producto);
+
+		Mensajeria.registrarMensaje(session, 4);
+
 		return "redirect:/superuser";
+	}
+
+	@RequestMapping("/adminGuardarProducto")
+	public String guardarProductoAdmin(Model model, @ModelAttribute("obj_producto") Producto producto,
+			@RequestParam("param_foto") MultipartFile archivo, HttpSession session) {
+
+		Usuario usu = new Usuario();
+		if (session.getAttribute("s_usuario") != null) {
+			usu = (Usuario) (session.getAttribute("s_usuario"));
+		}
+
+		String ruta = "";
+		switch (usu.getRol().getId()) {
+		case 1:
+			ruta = "redirect:/superuser";
+			break;
+		case 2:
+			ruta = "redirect:/superuser";
+			break;
+		default:
+			return "redirect:https://www.google.es/";
+		}
+
+		Mensajeria.limpiarMensaje(session);
+
+		Auxiliares.guardarImagen(producto, archivo);
+
+		productoRepo.save(producto);
+
+		Mensajeria.registrarMensaje(session, 1);
+
+		return ruta;
 	}
 
 }
